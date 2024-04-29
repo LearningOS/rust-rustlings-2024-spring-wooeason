@@ -2,11 +2,11 @@
 	heap
 	This question requires you to implement a binary heap function
 */
-// I AM NOT DONE
 
 use std::cmp::Ord;
 use std::default::Default;
 
+#[derive(Debug)]
 pub struct Heap<T>
 where
     T: Default,
@@ -38,6 +38,16 @@ where
 
     pub fn add(&mut self, value: T) {
         //TODO
+        // assert!(self.items.len() > 0);
+        self.count += 1;
+        self.items.push(value);
+        let mut idx = self.count;
+        let mut pa_idx = self.parent_idx(idx);
+        while pa_idx != 0 && (self.comparator)(&self.items[idx], &self.items[pa_idx]) {
+            self.items.swap(idx, pa_idx);
+            idx = pa_idx;
+            pa_idx = self.parent_idx(idx);
+        }
     }
 
     fn parent_idx(&self, idx: usize) -> usize {
@@ -58,7 +68,33 @@ where
 
     fn smallest_child_idx(&self, idx: usize) -> usize {
         //TODO
-		0
+        let left = self.left_child_idx(idx);
+        let right = self.right_child_idx(idx);
+        if right > self.count {
+            if left > self.count {
+                return 0;
+            } else {
+                return left;
+            }
+        } else {
+            return right;
+        }
+        // if left > self.count {
+        //     if right > self.count {
+        //         return 0
+        //     } else {
+        //         return right
+        //     }
+        // } else {
+        //     if right > self.count {
+        //         return left
+        //     }
+        // }
+		// if self.items[left] < self.items[right] {
+        //     left
+        // } else {
+        //     right
+        // }
     }
 }
 
@@ -85,7 +121,29 @@ where
 
     fn next(&mut self) -> Option<T> {
         //TODO
-		None
+        if self.count <= 0 {
+            return None;
+        }
+        self.items.swap(1, self.count);
+        let ret = self.items.pop();
+        self.count -= 1;
+        let mut now = 1;
+		loop {
+            let left = self.left_child_idx(now);
+            let right = self.right_child_idx(now);
+            // println!("{now}, {left}, {right}");
+            if self.count >= left && (self.comparator)(&self.items[left], &self.items[now]) {
+                self.items.swap(now, left);
+                now = left;
+            } else if self.count >= right && (self.comparator)(&self.items[right], &self.items[now]) {
+                self.items.swap(now, right);
+                now = right;
+            } else {
+                break;
+            }
+
+        }
+        ret
     }
 }
 

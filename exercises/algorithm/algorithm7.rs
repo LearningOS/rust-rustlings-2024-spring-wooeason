@@ -3,7 +3,6 @@
 	This question requires you to use a stack to achieve a bracket match
 */
 
-// I AM NOT DONE
 #[derive(Debug)]
 struct Stack<T> {
 	size: usize,
@@ -31,8 +30,11 @@ impl<T> Stack<T> {
 		self.size += 1;
 	}
 	fn pop(&mut self) -> Option<T> {
-		// TODO
-		None
+		if 0 == self.size {
+			return None;
+		}
+		self.size = self.size - 1;
+		self.data.pop()
 	}
 	fn peek(&self) -> Option<&T> {
 		if 0 == self.size {
@@ -102,7 +104,61 @@ impl<'a, T> Iterator for IterMut<'a, T> {
 fn bracket_match(bracket: &str) -> bool
 {
 	//TODO
-	true
+	let mut s = Stack::<usize>::new();
+	for i in bracket.chars() {
+		// println!("{}", i);
+		match i {
+			'(' => s.push(0),
+			'{' => s.push(1),
+			'[' => s.push(2),
+			')' => {
+				if let Some(top) = s.peek() {
+					if *top == 0 {
+						s.pop();
+					} else {
+						println!("{:?}", s);
+						return false;
+					}
+				} else {
+					println!("{:?}", s);
+					return false;
+				}
+			},
+			'}' => {
+				if let Some(top) = s.peek() {
+					if *top == 1 {
+						s.pop();
+					} else {
+						println!("{:?}", s);
+						return false;
+					}
+				} else {
+					println!("{:?}", s);
+					return false;
+				}
+			},
+			']' => {
+				if let Some(top) = s.peek() {
+					if *top == 2 {
+						s.pop();
+					} else {
+						println!("{:?}", s);
+						return false;
+					}
+				} else {
+					println!("{:?}", s);
+					return false;
+				}
+			},
+			_ => ()
+		}
+	}
+	if s.is_empty() {
+		true
+	} else {
+		// println!("{:?}", s);
+		false
+	}
 }
 
 #[cfg(test)]
